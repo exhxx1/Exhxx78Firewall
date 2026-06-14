@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
 
         // العنوان
         TextView title = new TextView(this);
-        title.setText("EXHXX SMART FIREWALL 🛡️");
+        title.setText("EXHXX78 SMART FIREWALL 🛡️");
         title.setTextColor(Color.parseColor("#FFD700"));
         title.setTextSize(22);
         title.setTypeface(null, Typeface.BOLD);
