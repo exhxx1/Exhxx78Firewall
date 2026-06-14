@@ -1,0 +1,12 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.exhxx78.firewall'
+    compileSdk 34
+    defaultConfig {
+        applicationId "com.exhxx78.firewall"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+}
