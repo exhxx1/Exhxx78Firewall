@@ -16,7 +16,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -35,13 +33,11 @@ public class MainActivity extends Activity {
     private TextView tvSelectedApp;
     private ImageView ivSelectedApp;
     private String selectedPackage = "";
-    private LinearLayout appCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // إضافة ScrollView كحاوية رئيسية لتجنب قص الشاشة
         ScrollView rootScroll = new ScrollView(this);
         rootScroll.setBackgroundColor(Color.parseColor("#121212"));
 
@@ -50,23 +46,25 @@ public class MainActivity extends Activity {
         mainLayout.setGravity(Gravity.CENTER_HORIZONTAL);
         mainLayout.setPadding(40, 60, 40, 40);
 
-        // العنوان
         TextView title = new TextView(this);
-        title.setText("EXHXX78 SMART FIREWALL 🛡️");
+        title.setText("EXHXX78 SMART FIREWALL");
         title.setTextColor(Color.parseColor("#FFD700"));
         title.setTextSize(22);
         title.setTypeface(null, Typeface.BOLD);
         title.setGravity(Gravity.CENTER);
         title.setPadding(0, 0, 0, 40);
+        Drawable shieldIcon = getResources().getDrawable(R.drawable.ic_firewall);
+        shieldIcon.setBounds(0, 0, 80, 80);
+        title.setCompoundDrawables(null, shieldIcon, null, null);
+        title.setCompoundDrawablePadding(20);
         mainLayout.addView(title);
 
-        // كارد التطبيق المحدد
         GradientDrawable instBg = new GradientDrawable();
         instBg.setColor(Color.parseColor("#1E1E1E"));
         instBg.setCornerRadius(20f);
         instBg.setStroke(2, Color.parseColor("#333333"));
 
-        appCard = new LinearLayout(this);
+        LinearLayout appCard = new LinearLayout(this);
         appCard.setOrientation(LinearLayout.HORIZONTAL);
         appCard.setGravity(Gravity.CENTER_VERTICAL);
         appCard.setBackground(instBg);
@@ -81,8 +79,8 @@ public class MainActivity extends Activity {
         ivSelectedApp.setLayoutParams(ivParams);
         
         tvSelectedApp = new TextView(this);
-        tvSelectedApp.setText("لم يتم تحديد التطبيق ❌");
-        tvSelectedApp.setTextColor(Color.parseColor("#FF5555"));
+        tvSelectedApp.setText("لم يتم تحديد أي تطبيق");
+        tvSelectedApp.setTextColor(Color.parseColor("#888888"));
         tvSelectedApp.setTextSize(16);
         tvSelectedApp.setTypeface(null, Typeface.BOLD);
         
@@ -90,32 +88,35 @@ public class MainActivity extends Activity {
         appCard.addView(tvSelectedApp);
         mainLayout.addView(appCard);
 
-        // زر اختيار التطبيق
         Button btnSelectApp = new Button(this);
-        btnSelectApp.setText("اختيار التطبيق 🔍");
+        btnSelectApp.setText("اختيار التطبيق");
         btnSelectApp.setTextColor(Color.WHITE);
         btnSelectApp.setTextSize(16);
+        btnSelectApp.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_search, 0);
+        btnSelectApp.setPadding(50, 0, 50, 0);
         GradientDrawable selectBg = new GradientDrawable();
         selectBg.setColor(Color.parseColor("#0088CC"));
         selectBg.setCornerRadius(15f);
         btnSelectApp.setBackground(selectBg);
-        LinearLayout.LayoutParams btnSelectParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams btnSelectParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 140);
         btnSelectParams.setMargins(0, 0, 0, 30);
         btnSelectApp.setLayoutParams(btnSelectParams);
         btnSelectApp.setOnClickListener(v -> showAppSelectionDialog());
         mainLayout.addView(btnSelectApp);
 
-        // زر التشغيل والإيقاف
         btnToggle = new Button(this);
         btnToggle.setTextSize(18);
+        btnToggle.setTextColor(Color.WHITE);
+        btnToggle.setPadding(50, 0, 50, 0);
+        btnToggle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_power, 0);
         updateButtonUI();
-        LinearLayout.LayoutParams btnToggleParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams btnToggleParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 150);
         btnToggleParams.setMargins(0, 0, 0, 40);
         btnToggle.setLayoutParams(btnToggleParams);
         btnToggle.setOnClickListener(v -> {
             if (!isFirewallActive) {
                 if (selectedPackage.isEmpty()) {
-                    Toast.makeText(this, "يرجى اختيار التطبيق أولاً من القائمة!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "يرجى اختيار التطبيق أولاً!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 prepareVpn();
@@ -125,53 +126,51 @@ public class MainActivity extends Activity {
         });
         mainLayout.addView(btnToggle);
 
-        // زر قناة التليجرام
         Button btnTelegram = new Button(this);
-        btnTelegram.setText("📢 انضم لقناتنا على تليجرام");
+        btnTelegram.setText("انضم لقناتنا على تليجرام");
         btnTelegram.setTextColor(Color.WHITE);
+        btnTelegram.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_telegram, 0);
+        btnTelegram.setPadding(50, 0, 50, 0);
         GradientDrawable tgBg = new GradientDrawable();
         tgBg.setColor(Color.parseColor("#0088CC"));
         tgBg.setCornerRadius(15f);
         btnTelegram.setBackground(tgBg);
-        LinearLayout.LayoutParams tgParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams tgParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 140);
         tgParams.setMargins(0, 0, 0, 40);
         btnTelegram.setLayoutParams(tgParams);
         btnTelegram.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/exhxx78")); 
-            startActivity(browserIntent);
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/exhxx78"))); 
         });
         mainLayout.addView(btnTelegram);
 
-        // --- قسم الفوائد والشرح (الجديد) ---
         LinearLayout infoBox = new LinearLayout(this);
         infoBox.setOrientation(LinearLayout.VERTICAL);
         infoBox.setBackground(instBg);
-        infoBox.setPadding(30, 30, 30, 30);
+        infoBox.setPadding(40, 40, 40, 40);
         LinearLayout.LayoutParams infoParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         infoParams.setMargins(0, 0, 0, 40);
         infoBox.setLayoutParams(infoParams);
 
         TextView tvInfoTitle = new TextView(this);
-        tvInfoTitle.setText("💡 فوائد التطبيق واستخداماته:");
+        tvInfoTitle.setText("فوائد التطبيق واستخداماته:");
         tvInfoTitle.setTextColor(Color.parseColor("#00E676"));
         tvInfoTitle.setTextSize(16);
         tvInfoTitle.setTypeface(null, Typeface.BOLD);
-        tvInfoTitle.setPadding(0, 0, 0, 15);
+        tvInfoTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_info, 0);
+        tvInfoTitle.setCompoundDrawablePadding(15);
+        tvInfoTitle.setPadding(0, 0, 0, 20);
         infoBox.addView(tvInfoTitle);
 
         TextView tvInfoBody = new TextView(this);
-        tvInfoBody.setText("سرعة الإنترنت الأساسية لديك لن تتغير، لكن التطبيق يمنع باقي برامج الجهاز من سحب الإنترنت بالخلفية، مما يعطيك الفوائد التالية:\n\n" +
-                "🎮 للألعاب (تقليل البنج): توجيه كل قوة الإنترنت للعبة فقط، مما يقلل البنج (Ping) ويمنع التقطيع نهائياً.\n\n" +
-                "💬 للخصوصية والهدوء: يمكنك اختيار تطبيق واحد للعمل (مثل يوتيوب)، وقطع الإنترنت عن باقي التطبيقات (مثل واتساب وتليجرام)، لكي تتصفح براحتك دون أن تظهر 'متصل الآن' ودون استلام رسائل مزعجة.");
+        tvInfoBody.setText("سرعة الإنترنت الأساسية لن تتغير، لكن التطبيق سيمنع باقي برامج الجهاز من سحب الإنترنت بالخلفية، مما يعطيك الفوائد التالية:\n\n" +
+                "• للألعاب (تقليل البنج): توجيه كل قوة الإنترنت للعبة فقط، مما يقلل البنج (Ping) ويمنع التقطيع نهائياً.\n\n" +
+                "• للخصوصية: يمكنك تشغيل تطبيق واحد فقط (مثل يوتيوب)، وقطع النت عن تطبيقات المراسلة (مثل واتساب)، لتتصفح براحتك دون ظهور 'متصل الآن'.");
         tvInfoBody.setTextColor(Color.parseColor("#CCCCCC"));
         tvInfoBody.setTextSize(14);
         tvInfoBody.setLineSpacing(5f, 1.3f);
         infoBox.addView(tvInfoBody);
-        
         mainLayout.addView(infoBox);
-        // ------------------------------------
 
-        // حقوق المطور
         TextView devCredit = new TextView(this);
         devCredit.setText("Developed by:\nMuhammad Adnan (@m_7004)");
         devCredit.setTextColor(Color.parseColor("#888888"));
@@ -184,17 +183,15 @@ public class MainActivity extends Activity {
         setContentView(rootScroll);
     }
 
-    // ديالوك (نافذة) اختيار التطبيقات مع البحث
     private void showAppSelectionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
-        
         LinearLayout dialogLayout = new LinearLayout(this);
         dialogLayout.setOrientation(LinearLayout.VERTICAL);
         dialogLayout.setBackgroundColor(Color.parseColor("#121212"));
         dialogLayout.setPadding(20, 40, 20, 20);
 
         TextView title = new TextView(this);
-        title.setText("اختر التطبيق 📱");
+        title.setText("اختر التطبيق");
         title.setTextColor(Color.WHITE);
         title.setTextSize(20);
         title.setGravity(Gravity.CENTER);
@@ -202,10 +199,11 @@ public class MainActivity extends Activity {
         dialogLayout.addView(title);
 
         EditText searchBox = new EditText(this);
-        searchBox.setHint("🔍 ابحث عن تطبيق أو لعبة...");
+        searchBox.setHint("ابحث عن تطبيق...");
         searchBox.setHintTextColor(Color.GRAY);
         searchBox.setTextColor(Color.WHITE);
         searchBox.setPadding(30, 30, 30, 30);
+        searchBox.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_search, 0);
         GradientDrawable searchBg = new GradientDrawable();
         searchBg.setColor(Color.parseColor("#1E1E1E"));
         searchBg.setCornerRadius(15f);
@@ -260,7 +258,6 @@ public class MainActivity extends Activity {
                 ivSelectedApp.setImageDrawable(icon);
                 dialog.dismiss();
             });
-
             listLayout.addView(itemLayout);
         }
 
@@ -280,7 +277,6 @@ public class MainActivity extends Activity {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void afterTextChanged(Editable s) {}
         });
-
         dialog.show();
     }
 
@@ -298,7 +294,7 @@ public class MainActivity extends Activity {
         if (requestCode == VPN_REQUEST_CODE && resultCode == RESULT_OK) {
             startFirewall();
         } else {
-            Toast.makeText(this, "يجب منح صلاحية الـ VPN ليعمل التطبيق!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "يجب منح صلاحية الاتصال ليعمل التطبيق!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -307,30 +303,26 @@ public class MainActivity extends Activity {
         intent.setAction(FirewallService.ACTION_START);
         intent.putExtra(FirewallService.EXTRA_PACKAGE, selectedPackage);
         startService(intent);
-        
         isFirewallActive = true;
         updateButtonUI();
-        Toast.makeText(this, "تم حظر الإنترنت! فقط التطبيق المحدد يعمل الآن.", Toast.LENGTH_LONG).show();
     }
 
     private void stopFirewall() {
         Intent intent = new Intent(this, FirewallService.class);
         intent.setAction(FirewallService.ACTION_STOP);
         startService(intent);
-        
         isFirewallActive = false;
         updateButtonUI();
-        Toast.makeText(this, "تم إيقاف الجدار الناري. الإنترنت عاد للجميع.", Toast.LENGTH_SHORT).show();
     }
 
     private void updateButtonUI() {
         GradientDrawable btnBg = new GradientDrawable();
         btnBg.setCornerRadius(20f);
         if (isFirewallActive) {
-            btnToggle.setText("إيقاف الجدار الناري 🛑");
+            btnToggle.setText("إيقاف الجدار الناري");
             btnBg.setColor(Color.parseColor("#D50000"));
         } else {
-            btnToggle.setText("تشغيل الجدار الناري 🚀");
+            btnToggle.setText("تشغيل الجدار الناري");
             btnBg.setColor(Color.parseColor("#00C853"));
         }
         btnToggle.setBackground(btnBg);
